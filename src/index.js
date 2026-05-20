@@ -99,7 +99,10 @@ class CardGalleryViewer {
                 </div>
             </div>
             <div class="cgv--toolbar">
-                <button class="menu_button cgv--follow">Follow Current</button>
+                <label class="checkbox_label cgv--followLabel">
+                    <input class="cgv--follow" type="checkbox" checked>
+                    <span>Follow Current</span>
+                </label>
                 <select class="text_pole cgv--cardSelect"></select>
                 <select class="text_pole cgv--sortSelect"></select>
                 <button class="menu_button cgv--add"><i class="fa-solid fa-plus"></i> Add</button>
@@ -122,8 +125,14 @@ class CardGalleryViewer {
     bindPanel(panel) {
         panel.querySelector('#cardGalleryViewerClose').addEventListener('click', () => this.hide());
         panel.querySelector('#cardGalleryViewerRefresh').addEventListener('click', () => this.refresh());
-        panel.querySelector('.cgv--follow').addEventListener('click', () => { this.followCurrent = true; this.refreshForCurrent(); });
-        panel.querySelector('.cgv--cardSelect').addEventListener('change', event => { this.followCurrent = false; this.manualTargetKey = event.target.value; this.refresh(); });
+        panel.querySelector('.cgv--follow').addEventListener('change', event => { this.followCurrent = event.currentTarget.checked; this.refreshForCurrent(); });
+        panel.querySelector('.cgv--cardSelect').addEventListener('change', event => {
+            this.followCurrent = false;
+            const follow = panel.querySelector('.cgv--follow');
+            follow.checked = false;
+            this.manualTargetKey = event.target.value;
+            this.refresh();
+        });
         const sort = panel.querySelector('.cgv--sortSelect');
         Object.values(SORT).forEach(item => sort.append(new Option(item.label, item.value)));
         sort.value = this.getSortOrder();
