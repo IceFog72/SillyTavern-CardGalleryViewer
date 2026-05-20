@@ -236,7 +236,7 @@ class CardGalleryViewer {
         const deleteLabel = panel?.querySelector('.cgv--deleteLabel');
         button?.classList.toggle('cgv--deleteActive', this.deleteMode);
         panel?.classList.toggle('cgv--deleteMode', this.deleteMode);
-        if (deleteLabel) deleteLabel.textContent = this.deleteMode ? 'Delete ON' : 'Delete';
+        if (deleteLabel) deleteLabel.textContent = 'Delete';
     }
 
     async refresh() {
