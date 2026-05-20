@@ -104,8 +104,8 @@ class CardGalleryViewer {
                 </label>
                 <select class="text_pole cgv--cardSelect"></select>
                 <select class="text_pole cgv--sortSelect"></select>
-                <button class="menu_button cgv--add"><i class="fa-solid fa-plus"></i> Add</button>
-                <button class="menu_button cgv--delete"><i class="fa-solid fa-trash"></i> <span class="cgv--deleteLabel">Delete</span></button>
+                <button class="menu_button cgv--add" title="Add"><i class="fa-solid fa-plus"></i> <span class="cgv--buttonLabel">Add</span></button>
+                <button class="menu_button cgv--delete" title="Delete mode"><i class="fa-solid fa-trash"></i> <span class="cgv--buttonLabel cgv--deleteLabel">Delete</span></button>
                 <input class="cgv--file" type="file" accept="image/*,video/*" multiple hidden>
             </div>
             <div class="cgv--deleteBanner">Delete mode active — click an image to delete it.</div>
@@ -245,11 +245,14 @@ class CardGalleryViewer {
         const host = document.getElementById(GALLERY_ID);
         if (!target || !host) return;
         document.querySelector(`#${PANEL_ID} .cgv--folderInput`).value = target.folder;
+        host.classList.remove('cgv--emptyDropZone');
         host.innerHTML = '<div class="cgv--loading">Loading gallery...</div>';
         this.destroyDropHandler();
         this.destroyNano();
         const items = await this.getGalleryItems(target.folder);
-        host.innerHTML = items.length ? '' : '<div class="cgv--empty">No images or videos in this gallery.</div>';
+        host.innerHTML = items.length ? '' : '<div class="cgv--empty">No images or videos in this gallery.<br>Drop files here or click Add.</div>';
+        host.classList.toggle('cgv--emptyDropZone', !items.length);
+        this.bindDropHandler(target.folder);
         if (items.length) await this.initGallery(items, target.folder);
     }
 
@@ -307,7 +310,6 @@ class CardGalleryViewer {
             fnThumbnailOpen: items => this.onThumbnailOpen(items),
             fnThumbnailInit: ($thumbnail, item) => item?.src && $thumbnail.attr('title', String(item.src).split('/').pop()),
         });
-        this.bindDropHandler(folder);
         await delay(100);
         gallery.css('height', 'unset');
         gallery.nanogallery2('resize');
