@@ -81,8 +81,33 @@
     flex: 1 1 auto;
 }
 
+.cgv--deleteBanner {
+    display: none;
+    padding: 8px;
+    border: 1px solid var(--warnColor, orange);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--warnColor, orange) 25%, transparent);
+    color: var(--SmartThemeBodyColor);
+    font-weight: 700;
+    text-align: center;
+}
+
+.cgv--deleteMode .cgv--deleteBanner { display: block; }
+
 .cgv--deleteActive {
-    outline: 1px solid var(--warnColor, orange);
+    outline: 2px solid var(--warnColor, orange);
+    background: color-mix(in srgb, var(--warnColor, orange) 35%, transparent) !important;
+    color: var(--SmartThemeBodyColor) !important;
+    font-weight: 700;
+}
+
+.cgv--deleteMode #cgv--dragGallery .nGY2GThumbnail,
+.cgv--deleteMode #cgv--dragGallery .nGY2GThumbnail * {
+    cursor: not-allowed !important;
+}
+
+.cgv--deleteMode #cgv--dragGallery .nGY2GThumbnail {
+    outline: 2px solid var(--warnColor, orange);
 }
 
 .cgv--empty,

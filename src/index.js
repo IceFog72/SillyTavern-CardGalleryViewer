@@ -105,9 +105,10 @@ class CardGalleryViewer {
                 <select class="text_pole cgv--cardSelect"></select>
                 <select class="text_pole cgv--sortSelect"></select>
                 <button class="menu_button cgv--add"><i class="fa-solid fa-plus"></i> Add</button>
-                <button class="menu_button cgv--delete"><i class="fa-solid fa-trash"></i> Delete</button>
+                <button class="menu_button cgv--delete"><i class="fa-solid fa-trash"></i> <span class="cgv--deleteLabel">Delete</span></button>
                 <input class="cgv--file" type="file" accept="image/*,video/*" multiple hidden>
             </div>
+            <div class="cgv--deleteBanner">Delete mode active — click an image to delete it.</div>
             <div class="cgv--folderRow">
                 <input class="text_pole cgv--folderInput" placeholder="Folder Name">
                 <button class="menu_button cgv--folderApply">Apply</button>
@@ -146,7 +147,7 @@ class CardGalleryViewer {
         });
         panel.querySelector('.cgv--delete').addEventListener('click', event => {
             this.deleteMode = !this.deleteMode;
-            event.currentTarget.classList.toggle('cgv--deleteActive', this.deleteMode);
+            this.updateDeleteMode(event.currentTarget);
         });
         panel.querySelector('.cgv--folderApply').addEventListener('click', async () => this.applyFolder());
         panel.querySelector('.cgv--folderRestore').addEventListener('click', async () => this.restoreFolder());
@@ -228,6 +229,14 @@ class CardGalleryViewer {
         select.innerHTML = '';
         this.getTargets().forEach(target => select.append(new Option(target.label, target.key)));
         select.value = selectedKey;
+    }
+
+    updateDeleteMode(button = document.querySelector(`#${PANEL_ID} .cgv--delete`)) {
+        const panel = document.getElementById(PANEL_ID);
+        const deleteLabel = panel?.querySelector('.cgv--deleteLabel');
+        button?.classList.toggle('cgv--deleteActive', this.deleteMode);
+        panel?.classList.toggle('cgv--deleteMode', this.deleteMode);
+        if (deleteLabel) deleteLabel.textContent = this.deleteMode ? 'Delete ON' : 'Delete';
     }
 
     async refresh() {
