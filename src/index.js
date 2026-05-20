@@ -111,7 +111,7 @@ class CardGalleryViewer {
                 <button class="menu_button cgv--folderApply">Apply</button>
                 <button class="menu_button cgv--folderRestore">Restore</button>
             </div>
-            <div class="cgv--content inline-drawer-content"><div id="${GALLERY_ID}"></div></div>`;
+            <div class="cgv--content"><div id="${GALLERY_ID}"></div></div>`;
         document.getElementById('movingDivs')?.append(panel);
         loadMovingUIState();
         dragElement($(panel));
