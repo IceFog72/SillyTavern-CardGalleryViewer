@@ -1,6 +1,5 @@
 import { animation_duration, animation_easing, characters, event_types, eventSource, getRequestHeaders, this_chid } from '../../../../../script.js';
 import { groups, selected_group } from '../../../../group-chats.js';
-import { DragAndDropHandler } from '../../../../dragdrop.js';
 import { deleteMediaFromServer } from '../../../../chats.js';
 import { loadMovingUIState } from '../../../../power-user.js';
 import { dragElement } from '../../../../RossAscends-mods.js';
@@ -28,7 +27,7 @@ class CardGalleryViewer {
         this.followCurrent = true;
         this.manualTargetKey = '';
         this.currentTargetKey = '';
-        this.dragDropHandler = null;
+        this.dropAbortController = null;
         this.pollTimer = null;
         this.handlers = [];
     }
@@ -41,7 +40,7 @@ class CardGalleryViewer {
 
     destroy() {
         this.stopTracking();
-        this.dragDropHandler?.destroy?.();
+        this.destroyDropHandler();
         this.destroyNano();
         document.getElementById('cgv--topButton')?.remove();
         document.getElementById(PANEL_ID)?.remove();
@@ -238,7 +237,7 @@ class CardGalleryViewer {
         if (!target || !host) return;
         document.querySelector(`#${PANEL_ID} .cgv--folderInput`).value = target.folder;
         host.innerHTML = '<div class="cgv--loading">Loading gallery...</div>';
-        this.dragDropHandler?.destroy?.();
+        this.destroyDropHandler();
         this.destroyNano();
         const items = await this.getGalleryItems(target.folder);
         host.innerHTML = items.length ? '' : '<div class="cgv--empty">No images or videos in this gallery.</div>';
@@ -256,6 +255,34 @@ class CardGalleryViewer {
         try { $(`#${GALLERY_ID}`).nanogallery2?.('destroy'); } catch { /* noop */ }
     }
 
+    destroyDropHandler() {
+        this.dropAbortController?.abort();
+        this.dropAbortController = null;
+        document.getElementById(GALLERY_ID)?.classList.remove('drop_target', 'dragover');
+    }
+
+    bindDropHandler(folder) {
+        this.destroyDropHandler();
+        const host = document.getElementById(GALLERY_ID);
+        if (!host) return;
+        this.dropAbortController = new AbortController();
+        const { signal } = this.dropAbortController;
+        const stop = event => {
+            event.preventDefault();
+            event.stopPropagation();
+        };
+        host.classList.add('drop_target');
+        host.addEventListener('dragover', event => { stop(event); host.classList.add('dragover'); }, { signal });
+        host.addEventListener('dragleave', event => { stop(event); host.classList.remove('dragover'); }, { signal });
+        host.addEventListener('drop', async event => {
+            stop(event);
+            host.classList.remove('dragover');
+            const files = Array.from(event.dataTransfer?.files ?? []);
+            for (const file of files) await this.uploadFile(file, folder);
+            if (files.length) await this.refresh();
+        }, { signal });
+    }
+
     async initGallery(items, folder) {
         const gallery = $(`#${GALLERY_ID}`);
         const thumbnailHeight = 150;
@@ -271,10 +298,7 @@ class CardGalleryViewer {
             fnThumbnailOpen: items => this.onThumbnailOpen(items),
             fnThumbnailInit: ($thumbnail, item) => item?.src && $thumbnail.attr('title', String(item.src).split('/').pop()),
         });
-        this.dragDropHandler = new DragAndDropHandler(`#${GALLERY_ID}`, async files => {
-            for (const file of Array.from(files ?? [])) await this.uploadFile(file, folder);
-            await this.refresh();
-        });
+        this.bindDropHandler(folder);
         await delay(100);
         gallery.css('height', 'unset');
         gallery.nanogallery2('resize');
