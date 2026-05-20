@@ -35,6 +35,7 @@ class CardGalleryViewer {
     init() {
         this.initSettings();
         this.renderTopButton();
+        this.ensurePanel();
         this.startTracking();
     }
 
@@ -87,7 +88,7 @@ class CardGalleryViewer {
         if (document.getElementById(PANEL_ID)) return;
         const panel = document.createElement('div');
         panel.id = PANEL_ID;
-        panel.classList.add('inline-drawer', 'flexGap5');
+        panel.classList.add('drawer-content', 'flexGap5');
         panel.innerHTML = `
             <div class="cgv--header">
                 <b>Card Gallery</b>
