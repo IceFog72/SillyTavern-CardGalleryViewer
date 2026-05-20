@@ -1,0 +1,17 @@
+{
+  "name": "sillytavern-card-gallery-viewer",
+  "version": "0.1.0",
+  "description": "Persistent card-aware gallery viewer for SillyTavern",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "check": "node --check src/index.js"
+  },
+  "keywords": [
+    "sillytavern",
+    "extension",
+    "gallery"
+  ],
+  "author": "IceFog72",
+  "license": "AGPL-3.0"
+}

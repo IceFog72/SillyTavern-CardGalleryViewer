@@ -1,0 +1,17 @@
+{
+  "display_name": "Card Gallery Viewer",
+  "loading_order": 99,
+  "js": "index.js",
+  "css": "style.css",
+  "author": "IceFog72",
+  "version": "0.1.0",
+  "homePage": "https://github.com/IceFog72/SillyTavern-CardGalleryViewer/",
+  "auto_update": false,
+  "minimum_client_version": "1.12.0",
+  "hooks": {
+    "enable": "onEnable",
+    "disable": "onDisable",
+    "activate": "onActivate",
+    "delete": "onDelete"
+  }
+}
